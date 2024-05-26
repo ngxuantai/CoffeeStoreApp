@@ -12,29 +12,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.myapplication.Activities.AddCategoryActivity;
 import com.example.myapplication.Activities.AddMenuActivity;
 import com.example.myapplication.Activities.AmountMenuActivity;
 import com.example.myapplication.Activities.HomeActivity;
-import com.example.myapplication.CustomAdapter.AdapterDisplayCategory;
 import com.example.myapplication.CustomAdapter.AdapterDisplayMenu;
-import com.example.myapplication.DAO.MonDAO;
-import com.example.myapplication.DTO.MonDTO;
+import com.example.myapplication.DAO.DrinkDAO;
+import com.example.myapplication.DTO.DrinkDTO;
 import com.example.myapplication.R;
 
 import java.util.List;
@@ -43,8 +36,8 @@ public class DisplayMenuFragment extends Fragment {
     int maloai, maban;
     String tenloai,tinhtrang;
     GridView gvDisplayMenu;
-    MonDAO monDAO;
-    List<MonDTO> monDTOList;
+    DrinkDAO drinkDAO;
+    List<DrinkDTO> drinkDTOList;
     AdapterDisplayMenu adapterDisplayMenu;
 
     ActivityResultLauncher<Intent> resultLauncherMenu = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -82,7 +75,7 @@ public class DisplayMenuFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.displaymenu_layout,container,false);
         ((HomeActivity)getActivity()).getSupportActionBar().setTitle("Quản lý thực đơn");
-        monDAO = new MonDAO(getActivity());
+        drinkDAO = new DrinkDAO(getActivity());
 
         gvDisplayMenu = (GridView)view.findViewById(R.id.gvDisplayMenu);
 
@@ -97,12 +90,12 @@ public class DisplayMenuFragment extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     //nếu lấy đc mã bàn mới mở
-                    tinhtrang = monDTOList.get(position).getTinhTrang();
+                    tinhtrang = drinkDTOList.get(position).getStatus();
                     if(maban != 0){
                         if(tinhtrang.equals("true")){
                             Intent iAmount = new Intent(getActivity(), AmountMenuActivity.class);
                             iAmount.putExtra("maban",maban);
-                            iAmount.putExtra("mamon",monDTOList.get(position).getMaMon());
+                            iAmount.putExtra("mamon", drinkDTOList.get(position).getDrinkID());
                             startActivity(iAmount);
                         }else {
                             Toast.makeText(getActivity(),"Món đã hết, không thể thêm", Toast.LENGTH_SHORT).show();
@@ -139,7 +132,7 @@ public class DisplayMenuFragment extends Fragment {
         int id = item.getItemId();
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int vitri = menuInfo.position;
-        int mamon = monDTOList.get(vitri).getMaMon();
+        int mamon = drinkDTOList.get(vitri).getDrinkID();
 
         switch (id){
             case R.id.itEdit:
@@ -151,7 +144,7 @@ public class DisplayMenuFragment extends Fragment {
                 break;
 
             case R.id.itDelete:
-                boolean ktra = monDAO.XoaMon(mamon);
+                boolean ktra = drinkDAO.deleteDrink(mamon);
                 if(ktra){
                     HienThiDSMon();
                     Toast.makeText(getActivity(),getActivity().getResources().getString(R.string.delete_sucessful)
@@ -187,8 +180,8 @@ public class DisplayMenuFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
     private void HienThiDSMon(){
-        monDTOList = monDAO.LayDSMonTheoLoai(maloai);
-        adapterDisplayMenu = new AdapterDisplayMenu(getActivity(),R.layout.custom_layout_displaymenu,monDTOList);
+        drinkDTOList = drinkDAO.getListDrinkByCategoryId(maloai);
+        adapterDisplayMenu = new AdapterDisplayMenu(getActivity(),R.layout.custom_layout_displaymenu, drinkDTOList);
         gvDisplayMenu.setAdapter(adapterDisplayMenu);
         adapterDisplayMenu.notifyDataSetChanged();
     }

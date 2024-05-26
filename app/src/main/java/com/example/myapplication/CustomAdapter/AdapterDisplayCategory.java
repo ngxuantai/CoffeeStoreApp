@@ -1,11 +1,8 @@
 package com.example.myapplication.CustomAdapter;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/*import com.example.myapplication.DAO.LoaiMonDAO;*/
-import com.example.myapplication.DTO.LoaiMonDTO;
+/*import com.example.myapplication.DAO.CategoryDAO;*/
+import com.example.myapplication.DTO.CategoryDTO;
 import com.example.myapplication.R;
 
 /*import java.io.FileNotFoundException;
@@ -26,29 +23,29 @@ import java.util.List;
 public class AdapterDisplayCategory extends BaseAdapter {
     Context context;
     int layout;
-    List<LoaiMonDTO> loaiMonDTOList ;
+    List<CategoryDTO> categoryDTOList;
     ViewHolder viewHolder;
 
     //constructor
-    public AdapterDisplayCategory(Context context, int layout, List<LoaiMonDTO> loaiMonDTOList){
+    public AdapterDisplayCategory(Context context, int layout, List<CategoryDTO> categoryDTOList){
         this.context = context;
         this.layout = layout;
-        this.loaiMonDTOList = loaiMonDTOList;
+        this.categoryDTOList = categoryDTOList;
     }
 
     @Override
     public int getCount() {
-        return loaiMonDTOList.size();
+        return categoryDTOList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return loaiMonDTOList.get(position);
+        return categoryDTOList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return loaiMonDTOList.get(position).getMaLoai();
+        return categoryDTOList.get(position).getCategoryID();
     }
 
     @Override
@@ -67,11 +64,11 @@ public class AdapterDisplayCategory extends BaseAdapter {
         }else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        LoaiMonDTO loaiMonDTO = loaiMonDTOList.get(position);
+        CategoryDTO categoryDTO = categoryDTOList.get(position);
 
-        viewHolder.txt_customcategory_TenLoai.setText(loaiMonDTO.getTenLoai());
+        viewHolder.txt_customcategory_TenLoai.setText(categoryDTO.getCategoryName());
 
-        byte[] categoryimage = loaiMonDTO.getHinhAnh();
+        byte[] categoryimage = categoryDTO.getImage();
         Bitmap bitmap = BitmapFactory.decodeByteArray(categoryimage,0,categoryimage.length);
         viewHolder.img_customcategory_HinhLoai.setImageBitmap(bitmap);
 

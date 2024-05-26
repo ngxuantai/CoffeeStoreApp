@@ -18,24 +18,22 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.Activities.AddTableActivity;
 import com.example.myapplication.Activities.EditTableActivity;
 import com.example.myapplication.Activities.HomeActivity;
 import com.example.myapplication.CustomAdapter.AdapterDisplayTable;
-import com.example.myapplication.DAO.BanAnDAO;
-import com.example.myapplication.DTO.BanAnDTO;
+import com.example.myapplication.DAO.TableDAO;
+import com.example.myapplication.DTO.TableDTO;
 import com.example.myapplication.R;
 
 import java.util.List;
 
 public class DisplayTableFragment extends Fragment {
     GridView GVDisplayTable;
-    List<BanAnDTO> banAnDTOList;
-    BanAnDAO banAnDAO;
+    List<TableDTO> tableDTOList;
+    TableDAO tableDAO;
     AdapterDisplayTable adapterDisplayTable;
 
     //Dùng activity result (activityforresult ko hổ trợ nữa) để nhận data gửi từ activity addtable
@@ -80,7 +78,7 @@ public class DisplayTableFragment extends Fragment {
         ((HomeActivity)getActivity()).getSupportActionBar().setTitle("Quản lý bàn");
 
         GVDisplayTable = (GridView)view.findViewById(R.id.gvDisplayTable);
-        banAnDAO = new BanAnDAO(getActivity());
+        tableDAO = new TableDAO(getActivity());
 
         HienThiDSBan();
 
@@ -101,7 +99,7 @@ public class DisplayTableFragment extends Fragment {
         int id = item.getItemId();
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int vitri = menuInfo.position;
-        int maban = banAnDTOList.get(vitri).getMaBan();
+        int maban = tableDTOList.get(vitri).getTableID();
         switch(id){
             case R.id.itEdit:
                 Intent intent = new Intent(getActivity(), EditTableActivity.class);
@@ -110,7 +108,7 @@ public class DisplayTableFragment extends Fragment {
                 break;
 
             case R.id.itDelete:
-                boolean ktraxoa = banAnDAO.XoaBanTheoMa(maban);
+                boolean ktraxoa = tableDAO.deleteTableById(maban);
                 if(ktraxoa){
                     HienThiDSBan();
                     Toast.makeText(getActivity(),getActivity().getResources().getString(R.string.delete_sucessful),Toast.LENGTH_SHORT).show();
@@ -151,8 +149,8 @@ public class DisplayTableFragment extends Fragment {
     }
 
     private void HienThiDSBan(){
-        banAnDTOList = banAnDAO.LayTatCaBanAn();
-        adapterDisplayTable = new AdapterDisplayTable(getActivity(),R.layout.custom_layout_displaytable,banAnDTOList);
+        tableDTOList = tableDAO.LayTatCaBanAn();
+        adapterDisplayTable = new AdapterDisplayTable(getActivity(),R.layout.custom_layout_displaytable, tableDTOList);
         GVDisplayTable.setAdapter(adapterDisplayTable);
         adapterDisplayTable.notifyDataSetChanged();
     }

@@ -4,16 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.example.myapplication.DAO.NhanVienDAO;
-import com.example.myapplication.DAO.QuyenDAO;
-import com.example.myapplication.DTO.NhanVienDTO;
+import com.example.myapplication.DAO.EmployeeDAO;
+import com.example.myapplication.DAO.RoleDAO;
+import com.example.myapplication.DTO.EmployeeDTO;
 import com.example.myapplication.R;
 
 import java.util.Calendar;
@@ -24,8 +23,8 @@ public class Register2ndActivity extends AppCompatActivity {
     DatePicker DT_signup_NgaySinh;
     Button BTN_signup_next;
     String hoTen,tenDN,eMail,sDT,matKhau,gioiTinh;
-    NhanVienDAO nhanVienDAO;
-    QuyenDAO quyenDAO;
+    EmployeeDAO employeeDAO;
+    RoleDAO roleDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +46,8 @@ public class Register2ndActivity extends AppCompatActivity {
             matKhau = bundle.getString("matkhau");
         }
         //khởi tạo kết nối csdl
-        nhanVienDAO = new NhanVienDAO(this);
-        quyenDAO = new QuyenDAO(this);
+        employeeDAO = new EmployeeDAO(this);
+        roleDAO = new RoleDAO(this);
 
         BTN_signup_next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,26 +69,26 @@ public class Register2ndActivity extends AppCompatActivity {
                         +"/"+DT_signup_NgaySinh.getYear();
 
                 //truyền dữ liệu vào obj nhanvienDTO
-                NhanVienDTO nhanVienDTO = new NhanVienDTO();
-                nhanVienDTO.setHOTENNV(hoTen);
-                nhanVienDTO.setTENDN(tenDN);
-                nhanVienDTO.setEMAIL(eMail);
-                nhanVienDTO.setSDT(sDT);
-                nhanVienDTO.setMATKHAU(matKhau);
-                nhanVienDTO.setGIOITINH(gioiTinh);
-                nhanVienDTO.setNGAYSINH(ngaySinh);
+                EmployeeDTO employeeDTO = new EmployeeDTO();
+                employeeDTO.setFullName(hoTen);
+                employeeDTO.setUserName(tenDN);
+                employeeDTO.setEmail(eMail);
+                employeeDTO.setPhoneNumber(sDT);
+                employeeDTO.setPassword(matKhau);
+                employeeDTO.setGender(gioiTinh);
+                employeeDTO.setBirthday(ngaySinh);
 
                 //nếu nhân viên đầu tiên đăng ký sẽ có quyền quản lý
-                if(!nhanVienDAO.KtraTonTaiNV()){
-                    quyenDAO.ThemQuyen("Quản lý");
-                    quyenDAO.ThemQuyen("Nhân viên");
-                    nhanVienDTO.setMAQUYEN(1);
+                if(!employeeDAO.checkExistEmployee()){
+                    roleDAO.addRole("Quản lý");
+                    roleDAO.addRole("Nhân viên");
+                    employeeDTO.setRoleId(1);
                 }else {
-                    nhanVienDTO.setMAQUYEN(2);
+                    employeeDTO.setRoleId(2);
                 }
 
                 //Thêm nv dựa theo obj nhanvienDTO
-                long ktra = nhanVienDAO.ThemNhanVien(nhanVienDTO);
+                long ktra = employeeDAO.addEmployee(employeeDTO);
                 if(ktra != 0){
                     Toast.makeText(Register2ndActivity.this,getResources().getString(R.string.add_sucessful),Toast.LENGTH_SHORT).show();
                     callLoginFromRegister();

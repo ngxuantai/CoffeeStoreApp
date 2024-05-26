@@ -18,24 +18,21 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.Activities.AddStaffActivity;
 import com.example.myapplication.Activities.HomeActivity;
-import com.example.myapplication.Activities.RegisterActivity;
 import com.example.myapplication.CustomAdapter.AdapterDisplayStaff;
-import com.example.myapplication.DAO.NhanVienDAO;
-import com.example.myapplication.DTO.NhanVienDTO;
+import com.example.myapplication.DAO.EmployeeDAO;
+import com.example.myapplication.DTO.EmployeeDTO;
 import com.example.myapplication.R;
 
 import java.util.List;
 
 public class DisplayStaffFragment extends Fragment {
     GridView gvStaff;
-    NhanVienDAO nhanVienDAO;
-    List<NhanVienDTO> nhanVienDTOS;
+    EmployeeDAO employeeDAO;
+    List<EmployeeDTO> employeeDTOS;
     AdapterDisplayStaff adapterDisplayStaff;
 
     ActivityResultLauncher<Intent> resultLauncherAdd = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -75,7 +72,7 @@ public class DisplayStaffFragment extends Fragment {
 
         gvStaff = (GridView)view.findViewById(R.id.gvStaff) ;
 
-        nhanVienDAO = new NhanVienDAO(getActivity());
+        employeeDAO = new EmployeeDAO(getActivity());
         HienThiDSNV();
 
         registerForContextMenu(gvStaff);
@@ -94,7 +91,7 @@ public class DisplayStaffFragment extends Fragment {
         int id = item.getItemId();
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int vitri = menuInfo.position;
-        int manv = nhanVienDTOS.get(vitri).getMANV();
+        int manv = employeeDTOS.get(vitri).getEmployId();
 
         switch (id){
             case R.id.itEdit:
@@ -104,7 +101,7 @@ public class DisplayStaffFragment extends Fragment {
                 break;
 
             case R.id.itDelete:
-                boolean ktra = nhanVienDAO.XoaNV(manv);
+                boolean ktra = employeeDAO.deleteEmployee(manv);
                 if(ktra){
                     HienThiDSNV();
                     Toast.makeText(getActivity(),getActivity().getResources().getString(R.string.delete_sucessful)
@@ -140,8 +137,8 @@ public class DisplayStaffFragment extends Fragment {
     }
 
     private void HienThiDSNV(){
-        nhanVienDTOS = nhanVienDAO.LayDSNV();
-        adapterDisplayStaff = new AdapterDisplayStaff(getActivity(),R.layout.custom_layout_displaystaff,nhanVienDTOS);
+        employeeDTOS = employeeDAO.getListEmployee();
+        adapterDisplayStaff = new AdapterDisplayStaff(getActivity(),R.layout.custom_layout_displaystaff, employeeDTOS);
         gvStaff.setAdapter(adapterDisplayStaff);
         adapterDisplayStaff.notifyDataSetChanged();
     }

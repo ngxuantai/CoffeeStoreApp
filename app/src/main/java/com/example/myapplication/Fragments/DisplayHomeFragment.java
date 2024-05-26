@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -18,10 +17,10 @@ import com.example.myapplication.Activities.AddCategoryActivity;
 import com.example.myapplication.Activities.HomeActivity;
 import com.example.myapplication.CustomAdapter.AdapterRecycleViewCategory;
 import com.example.myapplication.CustomAdapter.AdapterRecycleViewStatistic;
-import com.example.myapplication.DAO.DonDatDAO;
-import com.example.myapplication.DAO.LoaiMonDAO;
-import com.example.myapplication.DTO.DonDatDTO;
-import com.example.myapplication.DTO.LoaiMonDTO;
+import com.example.myapplication.DAO.CategoryDAO;
+import com.example.myapplication.DAO.OrderDAO;
+import com.example.myapplication.DTO.OrderDTO;
+import com.example.myapplication.DTO.CategoryDTO;
 import com.example.myapplication.R;
 import com.google.android.material.navigation.NavigationView;
 
@@ -33,10 +32,10 @@ public class DisplayHomeFragment    extends Fragment implements View.OnClickList
     RecyclerView rcv_displayhome_LoaiMon, rcv_displayhome_DonTrongNgay;
     RelativeLayout layout_displayhome_ThongKe,layout_displayhome_XemBan, layout_displayhome_XemMenu, layout_displayhome_XemNV;
     TextView txt_displayhome_ViewAllCategory, txt_displayhome_ViewAllStatistic;
-    LoaiMonDAO loaiMonDAO;
-    DonDatDAO donDatDAO;
-    List<LoaiMonDTO> loaiMonDTOList;
-    List<DonDatDTO> donDatDTOS;
+    CategoryDAO categoryDAO;
+    OrderDAO orderDAO;
+    List<CategoryDTO> categoryDTOList;
+    List<OrderDTO> orderDTOS;
     AdapterRecycleViewCategory adapterRecycleViewCategory;
     AdapterRecycleViewStatistic adapterRecycleViewStatistic;
 
@@ -58,8 +57,8 @@ public class DisplayHomeFragment    extends Fragment implements View.OnClickList
         //endregion
 
         //khởi tạo kết nối
-        loaiMonDAO = new LoaiMonDAO(getActivity());
-        donDatDAO = new DonDatDAO(getActivity());
+        categoryDAO = new CategoryDAO(getActivity());
+        orderDAO = new OrderDAO(getActivity());
 
         HienThiDSLoai();
         HienThiDonTrongNgay();
@@ -77,8 +76,8 @@ public class DisplayHomeFragment    extends Fragment implements View.OnClickList
     private void HienThiDSLoai(){
         rcv_displayhome_LoaiMon.setHasFixedSize(true);
         rcv_displayhome_LoaiMon.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.HORIZONTAL,false));
-        loaiMonDTOList = loaiMonDAO.LayDSLoaiMon();
-        adapterRecycleViewCategory = new AdapterRecycleViewCategory(getActivity(),R.layout.custom_layout_displaycategory,loaiMonDTOList);
+        categoryDTOList = categoryDAO.getListCategory();
+        adapterRecycleViewCategory = new AdapterRecycleViewCategory(getActivity(),R.layout.custom_layout_displaycategory, categoryDTOList);
         rcv_displayhome_LoaiMon.setAdapter(adapterRecycleViewCategory);
         adapterRecycleViewCategory.notifyDataSetChanged();
     }
@@ -90,8 +89,8 @@ public class DisplayHomeFragment    extends Fragment implements View.OnClickList
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         String ngaydat= dateFormat.format(calendar.getTime());
 
-        donDatDTOS = donDatDAO.LayDSDonDatNgay(ngaydat);
-        adapterRecycleViewStatistic = new AdapterRecycleViewStatistic(getActivity(),R.layout.custom_layout_displaystatistic,donDatDTOS);
+        orderDTOS = orderDAO.getListOrderByDate(ngaydat);
+        adapterRecycleViewStatistic = new AdapterRecycleViewStatistic(getActivity(),R.layout.custom_layout_displaystatistic, orderDTOS);
         rcv_displayhome_DonTrongNgay.setAdapter(adapterRecycleViewStatistic);
         adapterRecycleViewCategory.notifyDataSetChanged();
     }

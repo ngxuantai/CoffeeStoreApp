@@ -9,9 +9,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
-import com.example.myapplication.DAO.ChiTietDonDatDAO;
-import com.example.myapplication.DAO.DonDatDAO;
-import com.example.myapplication.DTO.ChiTietDonDatDTO;
+import com.example.myapplication.DAO.OrderDetailDAO;
+import com.example.myapplication.DAO.OrderDAO;
+import com.example.myapplication.DTO.OrderDetailDTO;
 import com.example.myapplication.R;
 
 public class AmountMenuActivity extends AppCompatActivity {
@@ -19,8 +19,8 @@ public class AmountMenuActivity extends AppCompatActivity {
     TextInputLayout TXTL_amountmenu_SoLuong;
     Button BTN_amountmenu_DongY;
     int maban, mamon;
-    DonDatDAO donDatDAO;
-    ChiTietDonDatDAO chiTietDonDatDAO;
+    OrderDAO orderDAO;
+    OrderDetailDAO orderDetailDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +32,8 @@ public class AmountMenuActivity extends AppCompatActivity {
         BTN_amountmenu_DongY = (Button)findViewById(R.id.btn_amountmenu_DongY);
 
         //khởi tạo kết nối csdl
-        donDatDAO = new DonDatDAO(this);
-        chiTietDonDatDAO = new ChiTietDonDatDAO(this);
+        orderDAO = new OrderDAO(this);
+        orderDetailDAO = new OrderDetailDAO(this);
 
         //Lấy thông tin từ bàn được chọn
         Intent intent = getIntent();
@@ -47,20 +47,20 @@ public class AmountMenuActivity extends AppCompatActivity {
                     return;
                 }
 
-                int madondat = (int) donDatDAO.LayMaDonTheoMaBan(maban,"false");
-                boolean ktra = chiTietDonDatDAO.KiemTraMonTonTai(madondat,mamon);
+                int madondat = (int) orderDAO.getOrderIdByTableId(maban,"false");
+                boolean ktra = orderDetailDAO.checkDrinkExist(madondat,mamon);
                 if(ktra){
                     //update số lượng món đã chọn
-                    int sluongcu = chiTietDonDatDAO.LaySLMonTheoMaDon(madondat,mamon);
+                    int sluongcu = orderDetailDAO.getNumberDrinkByOrderId(madondat,mamon);
                     int sluongmoi = Integer.parseInt(TXTL_amountmenu_SoLuong.getEditText().getText().toString());
                     int tongsl = sluongcu + sluongmoi;
 
-                    ChiTietDonDatDTO chiTietDonDatDTO = new ChiTietDonDatDTO();
-                    chiTietDonDatDTO.setMaMon(mamon);
-                    chiTietDonDatDTO.setMaDonDat(madondat);
-                    chiTietDonDatDTO.setSoLuong(tongsl);
+                    OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+                    orderDetailDTO.setDrinkID(mamon);
+                    orderDetailDTO.setOrderID(madondat);
+                    orderDetailDTO.setQuantity(tongsl);
 
-                    boolean ktracapnhat = chiTietDonDatDAO.CapNhatSL(chiTietDonDatDTO);
+                    boolean ktracapnhat = orderDetailDAO.updateNumber(orderDetailDTO);
                     if(ktracapnhat){
                         Toast.makeText(getApplicationContext(),getResources().getString(R.string.add_sucessful),Toast.LENGTH_SHORT).show();
                     }else {
@@ -69,12 +69,12 @@ public class AmountMenuActivity extends AppCompatActivity {
                 }else {
                     //thêm số lượng món nếu chưa chọn món này
                     int sluong = Integer.parseInt(TXTL_amountmenu_SoLuong.getEditText().getText().toString());
-                    ChiTietDonDatDTO chiTietDonDatDTO = new ChiTietDonDatDTO();
-                    chiTietDonDatDTO.setMaMon(mamon);
-                    chiTietDonDatDTO.setMaDonDat(madondat);
-                    chiTietDonDatDTO.setSoLuong(sluong);
+                    OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+                    orderDetailDTO.setDrinkID(mamon);
+                    orderDetailDTO.setOrderID(madondat);
+                    orderDetailDTO.setQuantity(sluong);
 
-                    boolean ktracapnhat = chiTietDonDatDAO.ThemChiTietDonDat(chiTietDonDatDTO);
+                    boolean ktracapnhat = orderDetailDAO.addOrderDetail(orderDetailDTO);
                     if(ktracapnhat){
                         Toast.makeText(getApplicationContext(),getResources().getString(R.string.add_sucessful),Toast.LENGTH_SHORT).show();
                     }else {

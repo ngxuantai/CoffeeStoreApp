@@ -10,11 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.CustomAdapter.AdapterDisplayPayment;
-import com.example.myapplication.DAO.BanAnDAO;
-import com.example.myapplication.DAO.NhanVienDAO;
-import com.example.myapplication.DAO.ThanhToanDAO;
-import com.example.myapplication.DTO.NhanVienDTO;
-import com.example.myapplication.DTO.ThanhToanDTO;
+import com.example.myapplication.DAO.TableDAO;
+import com.example.myapplication.DAO.EmployeeDAO;
+import com.example.myapplication.DAO.PaymentDAO;
+import com.example.myapplication.DTO.EmployeeDTO;
+import com.example.myapplication.DTO.PaymentDTO;
 import com.example.myapplication.R;
 
 import java.util.List;
@@ -26,10 +26,10 @@ public class DetailStatisticActivity extends AppCompatActivity {
     GridView gvDetailStatistic;
     int madon, manv, maban;
     String ngaydat, tongtien;
-    NhanVienDAO nhanVienDAO;
-    BanAnDAO banAnDAO;
-    List<ThanhToanDTO> thanhToanDTOList;
-    ThanhToanDAO thanhToanDAO;
+    EmployeeDAO employeeDAO;
+    TableDAO tableDAO;
+    List<PaymentDTO> paymentDTOList;
+    PaymentDAO paymentDAO;
     AdapterDisplayPayment adapterDisplayPayment;
 
     @Override
@@ -56,9 +56,9 @@ public class DetailStatisticActivity extends AppCompatActivity {
         //endregion
 
         //khởi tạo lớp dao mở kết nối csdl
-        nhanVienDAO = new NhanVienDAO(this);
-        banAnDAO = new BanAnDAO(this);
-        thanhToanDAO = new ThanhToanDAO(this);
+        employeeDAO = new EmployeeDAO(this);
+        tableDAO = new TableDAO(this);
+        paymentDAO = new PaymentDAO(this);
 
         //chỉ hiển thị nếu lấy đc mã đơn đc chọn
         if (madon !=0){
@@ -66,9 +66,9 @@ public class DetailStatisticActivity extends AppCompatActivity {
             txt_detailstatistic_NgayDat.setText(ngaydat);
             txt_detailstatistic_TongTien.setText(tongtien+" VNĐ");
 
-            NhanVienDTO nhanVienDTO = nhanVienDAO.LayNVTheoMa(manv);
-            txt_detailstatistic_TenNV.setText(nhanVienDTO.getHOTENNV());
-            txt_detailstatistic_TenBan.setText(banAnDAO.LayTenBanTheoMa(maban));
+            EmployeeDTO employeeDTO = employeeDAO.getEmployeeById(manv);
+            txt_detailstatistic_TenNV.setText(employeeDTO.getFullName());
+            txt_detailstatistic_TenBan.setText(tableDAO.getTableNameById(maban));
 
             HienThiDSCTDD();
         }
@@ -83,8 +83,8 @@ public class DetailStatisticActivity extends AppCompatActivity {
     }
 
     private void HienThiDSCTDD(){
-        thanhToanDTOList = thanhToanDAO.LayDSMonTheoMaDon(madon);
-        adapterDisplayPayment = new AdapterDisplayPayment(this,R.layout.custom_layout_paymentmenu,thanhToanDTOList);
+        paymentDTOList = paymentDAO.getListDrinkByOrderId(madon);
+        adapterDisplayPayment = new AdapterDisplayPayment(this,R.layout.custom_layout_paymentmenu, paymentDTOList);
         gvDetailStatistic.setAdapter(adapterDisplayPayment);
         adapterDisplayPayment.notifyDataSetChanged();
     }

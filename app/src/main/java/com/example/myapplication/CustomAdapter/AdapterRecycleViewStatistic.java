@@ -9,31 +9,28 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.DAO.BanAnDAO;
-import com.example.myapplication.DAO.NhanVienDAO;
-import com.example.myapplication.DTO.DonDatDTO;
-import com.example.myapplication.DTO.LoaiMonDTO;
-import com.example.myapplication.DTO.NhanVienDTO;
+import com.example.myapplication.DAO.TableDAO;
+import com.example.myapplication.DAO.EmployeeDAO;
+import com.example.myapplication.DTO.OrderDTO;
+import com.example.myapplication.DTO.EmployeeDTO;
 import com.example.myapplication.R;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
 public class AdapterRecycleViewStatistic extends RecyclerView.Adapter<AdapterRecycleViewStatistic.ViewHolder> {
     Context context;
     int layout;
-    List<DonDatDTO> donDatDTOList;
-    NhanVienDAO nhanVienDAO;
-    BanAnDAO banAnDAO;
+    List<OrderDTO> orderDTOList;
+    EmployeeDAO employeeDAO;
+    TableDAO tableDAO;
 
-    public AdapterRecycleViewStatistic(Context context, int layout, List<DonDatDTO> donDatDTOList){
+    public AdapterRecycleViewStatistic(Context context, int layout, List<OrderDTO> orderDTOList){
 
         this.context =context;
         this.layout = layout;
-        this.donDatDTOList = donDatDTOList;
-        nhanVienDAO = new NhanVienDAO(context);
-        banAnDAO = new BanAnDAO(context);
+        this.orderDTOList = orderDTOList;
+        employeeDAO = new EmployeeDAO(context);
+        tableDAO = new TableDAO(context);
     }
 
 
@@ -45,30 +42,30 @@ public class AdapterRecycleViewStatistic extends RecyclerView.Adapter<AdapterRec
 
     @Override
     public void onBindViewHolder(AdapterRecycleViewStatistic.ViewHolder holder, int position) {
-        DonDatDTO donDatDTO = donDatDTOList.get(position);
-        holder.txt_customstatistic_MaDon.setText("Mã đơn: "+donDatDTO.getMaDonDat());
-        holder.txt_customstatistic_NgayDat.setText(donDatDTO.getNgayDat());
-        if(donDatDTO.getTongTien().equals("0"))
+        OrderDTO orderDTO = orderDTOList.get(position);
+        holder.txt_customstatistic_MaDon.setText("Mã đơn: "+ orderDTO.getOrderID());
+        holder.txt_customstatistic_NgayDat.setText(orderDTO.getDate());
+        if(orderDTO.getTotalAmount().equals("0"))
         {
             holder.txt_customstatistic_TongTien.setVisibility(View.INVISIBLE);
         }else {
             holder.txt_customstatistic_TongTien.setVisibility(View.VISIBLE);
         }
 
-        if (donDatDTO.getTinhTrang().equals("true"))
+        if (orderDTO.getStatus().equals("true"))
         {
             holder.txt_customstatistic_TrangThai.setText("Đã thanh toán");
         }else {
             holder.txt_customstatistic_TrangThai.setText("Chưa thanh toán");
         }
-        NhanVienDTO nhanVienDTO = nhanVienDAO.LayNVTheoMa(donDatDTO.getMaNV());
-        holder.txt_customstatistic_TenNV.setText(nhanVienDTO.getHOTENNV());
-        holder.txt_customstatistic_BanDat.setText(banAnDAO.LayTenBanTheoMa(donDatDTO.getMaBan()));
+        EmployeeDTO employeeDTO = employeeDAO.getEmployeeById(orderDTO.getEmployeeID());
+        holder.txt_customstatistic_TenNV.setText(employeeDTO.getFullName());
+        holder.txt_customstatistic_BanDat.setText(tableDAO.getTableNameById(orderDTO.getTableID()));
     }
 
     @Override
     public int getItemCount() {
-        return donDatDTOList.size();
+        return orderDTOList.size();
     }
 
 

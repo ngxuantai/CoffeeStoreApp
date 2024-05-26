@@ -10,39 +10,37 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.DTO.MonDTO;
+import com.example.myapplication.DTO.DrinkDTO;
 import com.example.myapplication.R;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
 public class AdapterDisplayMenu extends BaseAdapter {
     Context context;
     int layout;
-    List<MonDTO> monDTOList;
+    List<DrinkDTO> drinkDTOList;
     Viewholder viewholder;
 
     //constructor
-    public AdapterDisplayMenu(Context context, int layout, List<MonDTO> monDTOList){
+    public AdapterDisplayMenu(Context context, int layout, List<DrinkDTO> drinkDTOList){
         this.context = context;
         this.layout = layout;
-        this.monDTOList = monDTOList;
+        this.drinkDTOList = drinkDTOList;
     }
 
     @Override
     public int getCount() {
-        return monDTOList.size();
+        return drinkDTOList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return monDTOList.get(position);
+        return drinkDTOList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return monDTOList.get(position).getMaMon();
+        return drinkDTOList.get(position).getDrinkID();
     }
 
     @Override
@@ -61,20 +59,20 @@ public class AdapterDisplayMenu extends BaseAdapter {
         }else {
             viewholder = (Viewholder) view.getTag();
         }
-        MonDTO monDTO = monDTOList.get(position);
-        viewholder.txt_custommenu_TenMon.setText(monDTO.getTenMon());
-        viewholder.txt_custommenu_GiaTien.setText(monDTO.getGiaTien()+" VNĐ");
+        DrinkDTO drinkDTO = drinkDTOList.get(position);
+        viewholder.txt_custommenu_TenMon.setText(drinkDTO.getDrinkName());
+        viewholder.txt_custommenu_GiaTien.setText(drinkDTO.getPrice()+" VNĐ");
 
         //hiển thị tình trạng của món
-        if(monDTO.getTinhTrang().equals("true")){
+        if(drinkDTO.getStatus().equals("true")){
             viewholder.txt_custommenu_TinhTrang.setText("Còn món");
         }else{
             viewholder.txt_custommenu_TinhTrang.setText("Hết món");
         }
 
         //lấy hình ảnh
-        if(monDTO.getHinhAnh() != null){
-            byte[] menuimage = monDTO.getHinhAnh();
+        if(drinkDTO.getImage() != null){
+            byte[] menuimage = drinkDTO.getImage();
             Bitmap bitmap = BitmapFactory.decodeByteArray(menuimage,0,menuimage.length);
             viewholder.img_custommenu_HinhMon.setImageBitmap(bitmap);
         }else {

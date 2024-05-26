@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.DTO.LoaiMonDTO;
+import com.example.myapplication.DTO.CategoryDTO;
 import com.example.myapplication.R;
 
 import java.util.List;
@@ -20,12 +20,12 @@ import java.util.List;
 public class AdapterRecycleViewCategory extends RecyclerView.Adapter<AdapterRecycleViewCategory.ViewHolder> {
     Context context;
     int layout;
-    List<LoaiMonDTO> loaiMonDTOList;
+    List<CategoryDTO> categoryDTOList;
 
-    public AdapterRecycleViewCategory(Context context,int layout, List<LoaiMonDTO> loaiMonDTOList){
+    public AdapterRecycleViewCategory(Context context,int layout, List<CategoryDTO> categoryDTOList){
         this.context = context;
         this.layout = layout;
-        this.loaiMonDTOList = loaiMonDTOList;
+        this.categoryDTOList = categoryDTOList;
     }
 
     @Override
@@ -36,16 +36,16 @@ public class AdapterRecycleViewCategory extends RecyclerView.Adapter<AdapterRecy
 
     @Override
     public void onBindViewHolder(AdapterRecycleViewCategory.ViewHolder holder, int position) {
-        LoaiMonDTO loaiMonDTO = loaiMonDTOList.get(position);
-        holder.txt_customcategory_TenLoai.setText(loaiMonDTO.getTenLoai());
-        byte[] categoryimage = loaiMonDTO.getHinhAnh();
+        CategoryDTO categoryDTO = categoryDTOList.get(position);
+        holder.txt_customcategory_TenLoai.setText(categoryDTO.getCategoryName());
+        byte[] categoryimage = categoryDTO.getImage();
         Bitmap bitmap = BitmapFactory.decodeByteArray(categoryimage,0,categoryimage.length);
         holder.img_customcategory_HinhLoai.setImageBitmap(bitmap);
     }
 
     @Override
     public int getItemCount() {
-        return loaiMonDTOList.size();
+        return categoryDTOList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

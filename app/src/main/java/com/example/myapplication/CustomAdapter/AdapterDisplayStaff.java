@@ -1,17 +1,15 @@
 package com.example.myapplication.CustomAdapter;
 
 import android.content.Context;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.DAO.QuyenDAO;
-import com.example.myapplication.DTO.NhanVienDTO;
+import com.example.myapplication.DAO.RoleDAO;
+import com.example.myapplication.DTO.EmployeeDTO;
 import com.example.myapplication.R;
 
 import java.util.List;
@@ -19,30 +17,30 @@ import java.util.List;
 public class AdapterDisplayStaff extends BaseAdapter {
     Context context;
     int layout;
-    List<NhanVienDTO> nhanVienDTOS;
+    List<EmployeeDTO> employeeDTOS;
     ViewHolder viewHolder;
-    QuyenDAO quyenDAO;
+    RoleDAO roleDAO;
 
-    public AdapterDisplayStaff(Context context, int layout, List<NhanVienDTO> nhanVienDTOS){
+    public AdapterDisplayStaff(Context context, int layout, List<EmployeeDTO> employeeDTOS){
         this.context = context;
         this.layout = layout;
-        this.nhanVienDTOS = nhanVienDTOS;
-        quyenDAO = new QuyenDAO(context);
+        this.employeeDTOS = employeeDTOS;
+        roleDAO = new RoleDAO(context);
     }
 
     @Override
     public int getCount() {
-        return nhanVienDTOS.size();
+        return employeeDTOS.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return nhanVienDTOS.get(position);
+        return employeeDTOS.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return nhanVienDTOS.get(position).getMANV();
+        return employeeDTOS.get(position).getEmployId();
     }
 
     @Override
@@ -63,12 +61,12 @@ public class AdapterDisplayStaff extends BaseAdapter {
         }else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        NhanVienDTO nhanVienDTO = nhanVienDTOS.get(position);
+        EmployeeDTO employeeDTO = employeeDTOS.get(position);
 
-        viewHolder.txt_customstaff_TenNV.setText(nhanVienDTO.getHOTENNV());
-        viewHolder.txt_customstaff_TenQuyen.setText(quyenDAO.LayTenQuyenTheoMa(nhanVienDTO.getMAQUYEN()));
-        viewHolder.txt_customstaff_SDT.setText(nhanVienDTO.getSDT());
-        viewHolder.txt_customstaff_Email.setText(nhanVienDTO.getEMAIL());
+        viewHolder.txt_customstaff_TenNV.setText(employeeDTO.getFullName());
+        viewHolder.txt_customstaff_TenQuyen.setText(roleDAO.getRoleById(employeeDTO.getRoleId()));
+        viewHolder.txt_customstaff_SDT.setText(employeeDTO.getPhoneNumber());
+        viewHolder.txt_customstaff_Email.setText(employeeDTO.getEmail());
 
         return view;
     }

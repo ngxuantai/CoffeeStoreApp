@@ -5,105 +5,114 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class CreateDatabase extends SQLiteOpenHelper {
-    public static String TBL_NHANVIEN = "NHANVIEN";
-    public static String TBL_MON = "MON";
-    public static String TBL_LOAIMON = "LOAIMON";
-    public static String TBL_BAN = "BAN";
-    public static String TBL_DONDAT = "DONDAT";
-    public static String TBL_CHITIETDONDAT = "CHITIETDONDAT";
-    public static String TBL_QUYEN = "QUYEN";
+        public static String TABLE_EMPLOYEE = "Employee";
+        public static String TABLE_DRINK = "Drink";
+        public static String TABLE_CATEGORY = "Category";
+        public static String TABLE_TABLES = "Tables";
+        public static String TABLE_ORDERS = "Orders";
+        public static String TABLE_ORDER_DETAIL = "OrderDetail";
+        public static String TABLE_ROLE = "Role";
 
-    //Bảng nhân viên
-    public static String TBL_NHANVIEN_MANV = "MANV";
-    public static String TBL_NHANVIEN_HOTENNV = "HOTENNV";
-    public static String TBL_NHANVIEN_TENDN = "TENDN";
-    public static String TBL_NHANVIEN_MATKHAU = "MATKHAU";
-    public static String TBL_NHANVIEN_EMAIL = "EMAIL";
-    public static String TBL_NHANVIEN_SDT = "SDT";
-    public static String TBL_NHANVIEN_GIOITINH = "GIOITINH";
-    public static String TBL_NHANVIEN_NGAYSINH = "NGAYSINH";
-    public static String TBL_NHANVIEN_MAQUYEN= "MAQUYEN";
+        // Employee table
+        public static String EMPLOYEE_ID = "EmployeeID";
+        public static String EMPLOYEE_FULLNAME = "FullName";
+        public static String EMPLOYEE_USERNAME = "Username";
+        public static String EMPLOYEE_PASSWORD = "Password";
+        public static String EMPLOYEE_EMAIL = "Email";
+        public static String EMPLOYEE_PHONE = "Phone";
+        public static String EMPLOYEE_GENDER = "Gender";
+        public static String EMPLOYEE_BIRTHDAY = "Birthday";
+        public static String EMPLOYEE_ROLE_ID = "RoleID";
 
-    //Bảng quyền
-    public static String TBL_QUYEN_MAQUYEN = "MAQUYEN";
-    public static String TBL_QUYEN_TENQUYEN = "TENQUYEN";
+        // Role table
+        public static String ROLE_ID = "RoleID";
+        public static String ROLE_NAME = "RoleName";
 
-    //Bảng món
-    public static String TBL_MON_MAMON = "MAMON";
-    public static String TBL_MON_TENMON = "TENMON";
-    public static String TBL_MON_GIATIEN = "GIATIEN";
-    public static String TBL_MON_TINHTRANG = "TINHTRANG";
-    public static String TBL_MON_HINHANH = "HINHANH";
-    public static String TBL_MON_MALOAI = "MALOAI";
+        // Drink table
+        public static String DRINK_ID = "DrinkID";
+        public static String DRINK_NAME = "DrinkName";
+        public static String DRINK_PRICE = "Price";
+        public static String DRINK_STATUS = "Status";
+        public static String DRINK_IMAGE = "Image";
+        public static String DRINK_CATEGORY_ID = "CategoryID";
 
-    //Bảng loại món
-    public static String TBL_LOAIMON_MALOAI = "MALOAI";
-    public static String TBL_LOAIMON_TENLOAI = "TENLOAI";
-    public static String TBL_LOAIMON_HINHANH = "HINHANH";
+        // Category table
+        public static String CATEGORY_ID = "CategoryID";
+        public static String CATEGORY_NAME = "CategoryName";
+        public static String CATEGORY_IMAGE = "Image";
 
-    //Bảng bàn
-    public static String TBL_BAN_MABAN = "MABAN";
-    public static String TBL_BAN_TENBAN = "TENBAN";
-    public static String TBL_BAN_TINHTRANG = "TINHTRANG";
+        // Table table
+        public static String TABLE_ID = "TableID";
+        public static String TABLE_NAME = "TableName";
+        public static String TABLE_STATUS = "Status";
 
-    //Bảng đơn đặt
-    public static String TBL_DONDAT_MADONDAT = "MADONDAT";
-    public static String TBL_DONDAT_MANV = "MANV";
-    public static String TBL_DONDAT_NGAYDAT = "NGAYDAT";
-    public static String TBL_DONDAT_TINHTRANG = "TINHTRANG";
-    public static String TBL_DONDAT_TONGTIEN = "TONGTIEN";
-    public static String TBL_DONDAT_MABAN = "MABAN";
+        // Order table
+        public static String ORDER_ID = "OrderID";
+        public static String ORDER_TABLE_ID = "TableID";
+        public static String ORDER_EMPLOYEE_ID = "EmployeeID";
+        public static String ORDER_DATE = "Date";
+        public static String ORDER_STATUS = "Status";
+        public static String ORDER_TOTAL_AMOUNT = "TotalAmount";
 
-    //Bảng chi tiết đơn đặt
-    public static String TBL_CHITIETDONDAT_MADONDAT = "MADONDAT";
-    public static String TBL_CHITIETDONDAT_MAMON = "MAMON";
-    public static String TBL_CHITIETDONDAT_SOLUONG = "SOLUONG";
+        // OrderDetail table
+        public static String ORDER_DETAIL_ORDER_ID = "OrderID";
+        public static String ORDER_DETAIL_DRINK_ID = "DrinkID";
+        public static String ORDER_DETAIL_QUANTITY = "Quantity";
 
+        public CreateDatabase(Context context) {
+                super(context, "OrderDrink", null, 1);
+        }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        String tblNHANVIEN = "CREATE TABLE " +TBL_NHANVIEN+ " ( " +TBL_NHANVIEN_MANV+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                +TBL_NHANVIEN_HOTENNV+ " TEXT, " +TBL_NHANVIEN_TENDN+ " TEXT, " +TBL_NHANVIEN_MATKHAU+ " TEXT, " +TBL_NHANVIEN_EMAIL+ " TEXT, "
-                +TBL_NHANVIEN_SDT+ " TEXT, " +TBL_NHANVIEN_GIOITINH+ " TEXT, " +TBL_NHANVIEN_NGAYSINH+ " TEXT , "+TBL_NHANVIEN_MAQUYEN+" INTEGER)";
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+                String tblEmployee = "CREATE TABLE " + TABLE_EMPLOYEE + " ( " + EMPLOYEE_ID
+                                + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                + EMPLOYEE_FULLNAME + " TEXT, " + EMPLOYEE_USERNAME + " TEXT, " + EMPLOYEE_PASSWORD
+                                + " TEXT, "
+                                + EMPLOYEE_EMAIL + " TEXT, " + EMPLOYEE_PHONE + " TEXT, " + EMPLOYEE_GENDER + " TEXT, "
+                                + EMPLOYEE_BIRTHDAY + " TEXT , " + EMPLOYEE_ROLE_ID + " INTEGER)";
 
-        String tblQUYEN = "CREATE TABLE " +TBL_QUYEN+ " ( " +TBL_QUYEN_MAQUYEN+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                +TBL_QUYEN_TENQUYEN+ " TEXT)" ;
+                String tblRole = "CREATE TABLE " + TABLE_ROLE + " ( " + ROLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                + ROLE_NAME + " TEXT)";
 
-        String tblBAN = "CREATE TABLE " +TBL_BAN+ " ( " +TBL_BAN_MABAN+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                +TBL_BAN_TENBAN+ " TEXT, " +TBL_BAN_TINHTRANG+ " TEXT )";
+                String tblTable = "CREATE TABLE " + TABLE_TABLES + " ( " + TABLE_ID
+                                + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                + TABLE_NAME + " TEXT, " + TABLE_STATUS + " TEXT )";
 
-        String tblMON = "CREATE TABLE " +TBL_MON+ " ( " +TBL_MON_MAMON+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                +TBL_MON_TENMON+ " TEXT, " +TBL_MON_GIATIEN+ " TEXT, " +TBL_MON_TINHTRANG+ " TEXT, "
-                +TBL_MON_HINHANH+ " BLOB, "+TBL_MON_MALOAI+ " INTEGER )";
+                String tblDrink = "CREATE TABLE " + TABLE_DRINK + " ( " + DRINK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                + DRINK_NAME + " TEXT, " + DRINK_PRICE + " TEXT, " + DRINK_STATUS + " TEXT, "
+                                + DRINK_IMAGE + " BLOB, " + DRINK_CATEGORY_ID + " INTEGER )";
 
-        String tblLOAIMON = "CREATE TABLE " +TBL_LOAIMON+ " ( " +TBL_LOAIMON_MALOAI+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                +TBL_LOAIMON_HINHANH+ " BLOB, " +TBL_LOAIMON_TENLOAI+ " TEXT)" ;
+                String tblCategory = "CREATE TABLE " + TABLE_CATEGORY + " ( " + CATEGORY_ID
+                                + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                + CATEGORY_IMAGE + " BLOB, " + CATEGORY_NAME + " TEXT)";
 
-        String tblDONDAT = "CREATE TABLE " +TBL_DONDAT+ " ( " +TBL_DONDAT_MADONDAT+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                +TBL_DONDAT_MABAN+ " INTEGER, " +TBL_DONDAT_MANV+ " INTEGER, " +TBL_DONDAT_NGAYDAT+ " TEXT, "+TBL_DONDAT_TONGTIEN+" TEXT,"
-                +TBL_DONDAT_TINHTRANG+ " TEXT )" ;
+                String tblOrder = "CREATE TABLE " + TABLE_ORDERS + " ( " + ORDER_ID
+                                + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                + ORDER_TABLE_ID + " INTEGER, " + ORDER_EMPLOYEE_ID + " INTEGER, " + ORDER_DATE
+                                + " TEXT, "
+                                + ORDER_TOTAL_AMOUNT + " TEXT," + ORDER_STATUS + " TEXT )";
 
-        String tblCHITIETDONDAT = "CREATE TABLE " +TBL_CHITIETDONDAT+ " ( " +TBL_CHITIETDONDAT_MADONDAT+ " INTEGER, "
-                +TBL_CHITIETDONDAT_MAMON+ " INTEGER, " +TBL_CHITIETDONDAT_SOLUONG+ " INTEGER, "
-                + " PRIMARY KEY ( " +TBL_CHITIETDONDAT_MADONDAT+ "," +TBL_CHITIETDONDAT_MAMON+ "))";
+                String tblOrderDetail = "CREATE TABLE " + TABLE_ORDER_DETAIL + " ( " + ORDER_DETAIL_ORDER_ID
+                                + " INTEGER, "
+                                + ORDER_DETAIL_DRINK_ID + " INTEGER, " + ORDER_DETAIL_QUANTITY + " INTEGER, "
+                                + " PRIMARY KEY ( " + ORDER_DETAIL_ORDER_ID + "," + ORDER_DETAIL_DRINK_ID + "))";
 
-        db.execSQL(tblNHANVIEN);
-        db.execSQL(tblQUYEN);
-        db.execSQL(tblBAN);
-        db.execSQL(tblMON);
-        db.execSQL(tblLOAIMON);
-        db.execSQL(tblDONDAT);
-        db.execSQL(tblCHITIETDONDAT);
-    }
-    public CreateDatabase(Context context) {
-        super(context, "OrderDrink", null, 1);
-    }
+                db.execSQL(tblEmployee);
+                db.execSQL(tblRole);
+                db.execSQL(tblTable);
+                db.execSQL(tblDrink);
+                db.execSQL(tblCategory);
+                db.execSQL(tblOrder);
+                db.execSQL(tblOrderDetail);
+        }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-    }
-    public SQLiteDatabase open(){
-        return this.getWritableDatabase();
-    }
+        }
+
+        public SQLiteDatabase open() {
+                return this.getWritableDatabase();
+        }
 }

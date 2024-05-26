@@ -13,7 +13,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,11 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
-import com.example.myapplication.DAO.LoaiMonDAO;
-import com.example.myapplication.DTO.LoaiMonDTO;
+import com.example.myapplication.DAO.CategoryDAO;
+import com.example.myapplication.DTO.CategoryDTO;
 import com.example.myapplication.R;
-
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -37,7 +34,7 @@ public class AddCategoryActivity extends AppCompatActivity implements View.OnCli
     ImageView IMG_addcategory_back, IMG_addcategory_ThemHinh;
     TextView TXT_addcategory_title;
     TextInputLayout TXTL_addcategory_TenLoai;
-    LoaiMonDAO loaiMonDAO;
+    CategoryDAO categoryDAO;
     int maloai = 0;
     Bitmap bitmapold;   //Bitmap dạng ảnh theo ma trận các pixel
 
@@ -64,7 +61,7 @@ public class AddCategoryActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addcategory_layout);
 
-        loaiMonDAO = new LoaiMonDAO(this);  //khởi tạo đối tượng dao kết nối csdl
+        categoryDAO = new CategoryDAO(this);  //khởi tạo đối tượng dao kết nối csdl
 
         //region Lấy đối tượng view
         BTN_addcategory_TaoLoai = (Button)findViewById(R.id.btn_addcategory_TaoLoai);
@@ -81,12 +78,12 @@ public class AddCategoryActivity extends AppCompatActivity implements View.OnCli
         maloai = getIntent().getIntExtra("maloai",0);
         if(maloai != 0){
             TXT_addcategory_title.setText(getResources().getString(R.string.editcategory));
-            LoaiMonDTO loaiMonDTO = loaiMonDAO.LayLoaiMonTheoMa(maloai);
+            CategoryDTO categoryDTO = categoryDAO.getCategoryById(maloai);
 
             //Hiển thị lại thông tin từ csdl
-            TXTL_addcategory_TenLoai.getEditText().setText(loaiMonDTO.getTenLoai());
+            TXTL_addcategory_TenLoai.getEditText().setText(categoryDTO.getCategoryName());
 
-            byte[] categoryimage = loaiMonDTO.getHinhAnh();
+            byte[] categoryimage = categoryDTO.getImage();
             Bitmap bitmap = BitmapFactory.decodeByteArray(categoryimage,0,categoryimage.length);
             IMG_addcategory_ThemHinh.setImageBitmap(bitmap);
 
@@ -123,14 +120,14 @@ public class AddCategoryActivity extends AppCompatActivity implements View.OnCli
                 }
 
                 String sTenLoai = TXTL_addcategory_TenLoai.getEditText().getText().toString();
-                LoaiMonDTO loaiMonDTO = new LoaiMonDTO();
-                loaiMonDTO.setTenLoai(sTenLoai);
-                loaiMonDTO.setHinhAnh(imageViewtoByte(IMG_addcategory_ThemHinh));
+                CategoryDTO categoryDTO = new CategoryDTO();
+                categoryDTO.setCategoryName(sTenLoai);
+                categoryDTO.setImage(imageViewtoByte(IMG_addcategory_ThemHinh));
                 if(maloai != 0){
-                    ktra = loaiMonDAO.SuaLoaiMon(loaiMonDTO,maloai);
+                    ktra = categoryDAO.editCategory(categoryDTO,maloai);
                     chucnang = "sualoai";
                 }else {
-                    ktra = loaiMonDAO.ThemLoaiMon(loaiMonDTO);
+                    ktra = categoryDAO.addCategory(categoryDTO);
                     chucnang = "themloai";
                 }
 

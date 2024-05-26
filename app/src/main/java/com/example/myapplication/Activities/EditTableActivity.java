@@ -6,16 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
-import com.example.myapplication.DAO.BanAnDAO;
+import com.example.myapplication.DAO.TableDAO;
 import com.example.myapplication.R;
 
 public class EditTableActivity extends AppCompatActivity {
     TextInputLayout TXTL_edittable_tenban;
     Button BTN_edittable_SuaBan;
-    BanAnDAO banAnDAO;
+    TableDAO tableDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +26,7 @@ public class EditTableActivity extends AppCompatActivity {
         BTN_edittable_SuaBan = (Button)findViewById(R.id.btn_edittable_SuaBan);
 
         //khởi tạo dao mở kết nối csdl
-        banAnDAO = new BanAnDAO(this);
+        tableDAO = new TableDAO(this);
         int maban = getIntent().getIntExtra("maban",0); //lấy maban từ bàn đc chọn
 
         BTN_edittable_SuaBan.setOnClickListener(new View.OnClickListener() {
@@ -36,7 +35,7 @@ public class EditTableActivity extends AppCompatActivity {
                 String tenban = TXTL_edittable_tenban.getEditText().getText().toString();
 
                 if(tenban != null || tenban.equals("")){
-                    boolean ktra = banAnDAO.CapNhatTenBan(maban,tenban);
+                    boolean ktra = tableDAO.updateTableName(maban,tenban);
                     Intent intent = new Intent();
                     intent.putExtra("ketquasua",ktra);
                     setResult(RESULT_OK,intent);

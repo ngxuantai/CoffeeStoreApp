@@ -2,21 +2,20 @@ package com.example.myapplication.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputLayout;
-import com.example.myapplication.DAO.BanAnDAO;
+import com.example.myapplication.DAO.TableDAO;
 import com.example.myapplication.R;
 
 public class AddTableActivity extends AppCompatActivity {
 
     TextInputLayout TXTL_addtable_tenban;
     Button BTN_addtable_TaoBan;
-    BanAnDAO banAnDAO;
+    TableDAO tableDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +26,13 @@ public class AddTableActivity extends AppCompatActivity {
         TXTL_addtable_tenban = (TextInputLayout)findViewById(R.id.txtl_addtable_tenban);
         BTN_addtable_TaoBan = (Button)findViewById(R.id.btn_addtable_TaoBan);
 
-        banAnDAO = new BanAnDAO(this);
+        tableDAO = new TableDAO(this);
         BTN_addtable_TaoBan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String sTenBanAn = TXTL_addtable_tenban.getEditText().getText().toString();
                 if(sTenBanAn != null || sTenBanAn.equals("")){
-                    boolean ktra = banAnDAO.ThemBanAn(sTenBanAn);
+                    boolean ktra = tableDAO.addTable(sTenBanAn);
                     //trả về result cho displaytable
                     Intent intent = new Intent();
                     intent.putExtra("ketquathem",ktra);

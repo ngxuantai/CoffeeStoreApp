@@ -2,7 +2,6 @@ package com.example.myapplication.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.CustomAdapter.AdapterDisplayPayment;
-import com.example.myapplication.DAO.BanAnDAO;
-import com.example.myapplication.DAO.DonDatDAO;
-import com.example.myapplication.DAO.ThanhToanDAO;
-import com.example.myapplication.DTO.ThanhToanDTO;
-import com.example.myapplication.Fragments.DisplayCategoryFragment;
-import com.example.myapplication.Fragments.DisplayTableFragment;
+import com.example.myapplication.DAO.TableDAO;
+import com.example.myapplication.DAO.OrderDAO;
+import com.example.myapplication.DAO.PaymentDAO;
+import com.example.myapplication.DTO.PaymentDTO;
 import com.example.myapplication.R;
 
 import java.util.List;
@@ -29,10 +26,10 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     TextView TXT_payment_TenBan, TXT_payment_NgayDat, TXT_payment_TongTien;
     Button BTN_payment_ThanhToan;
     GridView gvDisplayPayment;
-    DonDatDAO donDatDAO;
-    BanAnDAO banAnDAO;
-    ThanhToanDAO thanhToanDAO;
-    List<ThanhToanDTO> thanhToanDTOS;
+    OrderDAO orderDAO;
+    TableDAO tableDAO;
+    PaymentDAO paymentDAO;
+    List<PaymentDTO> paymentDTOS;
     AdapterDisplayPayment adapterDisplayPayment;
     long tongtien = 0;
     int maban, madondat;
@@ -53,16 +50,16 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         //endregion
 
         //khởi tạo kết nối csdl
-        donDatDAO = new DonDatDAO(this);
-        thanhToanDAO = new ThanhToanDAO(this);
-        banAnDAO = new BanAnDAO(this);
+        orderDAO = new OrderDAO(this);
+        paymentDAO = new PaymentDAO(this);
+        tableDAO = new TableDAO(this);
 
         fragmentManager = getSupportFragmentManager();
 
         //lấy data từ mã bàn đc chọn
         Intent intent = getIntent();
         maban = intent.getIntExtra("maban",0);
-        String tenban = intent.getStringExtra("tenban");
+        String tenban = intent.getStringExtra("nameTable");
         String ngaydat = intent.getStringExtra("ngaydat");
 
         TXT_payment_TenBan.setText(tenban);
@@ -72,9 +69,9 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         if(maban !=0 ){
             HienThiThanhToan();
 
-            for (int i=0;i<thanhToanDTOS.size();i++){
-                int soluong = thanhToanDTOS.get(i).getSoLuong();
-                int giatien = thanhToanDTOS.get(i).getGiaTien();
+            for (int i = 0; i< paymentDTOS.size(); i++){
+                int soluong = paymentDTOS.get(i).getQuantity();
+                int giatien = paymentDTOS.get(i).getPrice();
 
                 tongtien += (soluong * giatien);
             }
@@ -90,9 +87,9 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         int id = v.getId();
         switch (id){
             case R.id.btn_payment_ThanhToan:
-                boolean ktraban = banAnDAO.CapNhatTinhTrangBan(maban,"false");
-                boolean ktradondat = donDatDAO.UpdateTThaiDonTheoMaBan(maban,"true");
-                boolean ktratongtien = donDatDAO.UpdateTongTienDonDat(madondat,String.valueOf(tongtien));
+                boolean ktraban = tableDAO.updateStatusTableById(maban,"false");
+                boolean ktradondat = orderDAO.UpdateTThaiDonTheoMaBan(maban,"true");
+                boolean ktratongtien = orderDAO.UpdateTongTienDonDat(madondat,String.valueOf(tongtien));
                 if(ktraban && ktradondat && ktratongtien){
                     HienThiThanhToan();
                     TXT_payment_TongTien.setText("0 VNĐ");
@@ -110,9 +107,9 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
     //hiển thị data lên gridview
     private void HienThiThanhToan(){
-        madondat = (int) donDatDAO.LayMaDonTheoMaBan(maban,"false");
-        thanhToanDTOS = thanhToanDAO.LayDSMonTheoMaDon(madondat);
-        adapterDisplayPayment = new AdapterDisplayPayment(this,R.layout.custom_layout_paymentmenu,thanhToanDTOS);
+        madondat = (int) orderDAO.getOrderIdByTableId(maban,"false");
+        paymentDTOS = paymentDAO.getListDrinkByOrderId(madondat);
+        adapterDisplayPayment = new AdapterDisplayPayment(this,R.layout.custom_layout_paymentmenu, paymentDTOS);
         gvDisplayPayment.setAdapter(adapterDisplayPayment);
         adapterDisplayPayment.notifyDataSetChanged();
     }

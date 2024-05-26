@@ -2,9 +2,7 @@ package com.example.myapplication.Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,34 +12,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.Activities.AddCategoryActivity;
-import com.example.myapplication.Activities.AddMenuActivity;
-import com.example.myapplication.Activities.AddStaffActivity;
 import com.example.myapplication.Activities.HomeActivity;
 import com.example.myapplication.CustomAdapter.AdapterDisplayCategory;
-import com.example.myapplication.DAO.LoaiMonDAO;
-import com.example.myapplication.DTO.LoaiMonDTO;
+import com.example.myapplication.DAO.CategoryDAO;
+import com.example.myapplication.DTO.CategoryDTO;
 import com.example.myapplication.R;
 
 import java.util.List;
 
 public class DisplayCategoryFragment extends Fragment {
     GridView gvCategory;
-    List<LoaiMonDTO> loaiMonDTOList;
-    LoaiMonDAO loaiMonDAO;
+    List<CategoryDTO> categoryDTOList;
+    CategoryDAO categoryDAO;
     AdapterDisplayCategory adapter;
     FragmentManager fragmentManager;
     int maban;
@@ -87,7 +80,7 @@ public class DisplayCategoryFragment extends Fragment {
 
         fragmentManager = getActivity().getSupportFragmentManager();
 
-        loaiMonDAO = new LoaiMonDAO(getActivity());
+        categoryDAO = new CategoryDAO(getActivity());
         HienThiDSLoai();
 
         Bundle bDataCategory = getArguments();
@@ -98,8 +91,8 @@ public class DisplayCategoryFragment extends Fragment {
         gvCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int maloai = loaiMonDTOList.get(position).getMaLoai();
-                String tenloai = loaiMonDTOList.get(position).getTenLoai();
+                int maloai = categoryDTOList.get(position).getCategoryID();
+                String tenloai = categoryDTOList.get(position).getCategoryName();
                 DisplayMenuFragment displayMenuFragment = new DisplayMenuFragment();
                 Bundle bundle = new Bundle();
                 bundle.putInt("maloai",maloai);
@@ -131,7 +124,7 @@ public class DisplayCategoryFragment extends Fragment {
         int id = item.getItemId();
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int vitri = menuInfo.position;
-        int maloai = loaiMonDTOList.get(vitri).getMaLoai();
+        int maloai = categoryDTOList.get(vitri).getCategoryID();
 
         switch (id){
             case R.id.itEdit:
@@ -141,7 +134,7 @@ public class DisplayCategoryFragment extends Fragment {
                 break;
 
             case R.id.itDelete:
-                boolean ktra = loaiMonDAO.XoaLoaiMon(maloai);
+                boolean ktra = categoryDAO.deleteCategory(maloai);
                 if(ktra){
                     HienThiDSLoai();
                     Toast.makeText(getActivity(),getActivity().getResources().getString(R.string.delete_sucessful)
@@ -180,8 +173,8 @@ public class DisplayCategoryFragment extends Fragment {
 
     //hiển thị dữ liệu trên gridview
     private void HienThiDSLoai(){
-        loaiMonDTOList = loaiMonDAO.LayDSLoaiMon();
-        adapter = new AdapterDisplayCategory(getActivity(),R.layout.custom_layout_displaycategory,loaiMonDTOList);
+        categoryDTOList = categoryDAO.getListCategory();
+        adapter = new AdapterDisplayCategory(getActivity(),R.layout.custom_layout_displaycategory, categoryDTOList);
         gvCategory.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

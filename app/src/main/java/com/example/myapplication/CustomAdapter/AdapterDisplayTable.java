@@ -1,6 +1,5 @@
 package com.example.myapplication.CustomAdapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,22 +11,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.Activities.HomeActivity;
 import com.example.myapplication.Activities.PaymentActivity;
-import com.example.myapplication.DAO.BanAnDAO;
-import com.example.myapplication.DAO.DonDatDAO;
-import com.example.myapplication.DTO.BanAnDTO;
-import com.example.myapplication.DTO.DonDatDTO;
+import com.example.myapplication.DAO.TableDAO;
+import com.example.myapplication.DAO.OrderDAO;
+import com.example.myapplication.DTO.TableDTO;
+import com.example.myapplication.DTO.OrderDTO;
 import com.example.myapplication.Fragments.DisplayCategoryFragment;
-import com.example.myapplication.Fragments.DisplayMenuFragment;
-import com.example.myapplication.Fragments.DisplayTableFragment;
 import com.example.myapplication.R;
 
 import java.text.SimpleDateFormat;
@@ -37,35 +30,35 @@ import java.util.List;
 public class AdapterDisplayTable extends BaseAdapter implements View.OnClickListener {
     Context context;
     int layout;
-    List<BanAnDTO> banAnDTOList;
+    List<TableDTO> tableDTOList;
     ViewHolder viewHolder;
-    BanAnDAO banAnDAO;
-    DonDatDAO donDatDAO;
+    TableDAO tableDAO;
+    OrderDAO orderDAO;
     FragmentManager fragmentManager;
 
 
-    public AdapterDisplayTable(Context context, int layout, List<BanAnDTO> banAnDTOList){
+    public AdapterDisplayTable(Context context, int layout, List<TableDTO> tableDTOList){
         this.context = context;
         this.layout = layout;
-        this.banAnDTOList = banAnDTOList;
-        banAnDAO = new BanAnDAO(context);
-        donDatDAO = new DonDatDAO(context);
+        this.tableDTOList = tableDTOList;
+        tableDAO = new TableDAO(context);
+        orderDAO = new OrderDAO(context);
         fragmentManager = ((HomeActivity)context).getSupportFragmentManager();
     }
 
     @Override
     public int getCount() {
-        return banAnDTOList.size();
+        return tableDTOList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return banAnDTOList.get(position);
+        return tableDTOList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return banAnDTOList.get(position).getMaBan();
+        return tableDTOList.get(position).getTableID();
     }
 
     @Override
@@ -87,15 +80,15 @@ public class AdapterDisplayTable extends BaseAdapter implements View.OnClickList
         }else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        if(banAnDTOList.get(position).isDuocChon()){
+        if(tableDTOList.get(position).isSelected()){
             HienThiButton();
         }else {
             AnButton();
         }
 
-        BanAnDTO banAnDTO = banAnDTOList.get(position);
+        TableDTO tableDTO = tableDTOList.get(position);
 
-        String kttinhtrang = banAnDAO.LayTinhTrangBanTheoMa(banAnDTO.getMaBan());
+        String kttinhtrang = tableDAO.getStatusTableById(tableDTO.getTableID());
         //đổi hình theo tình trạng
         if(kttinhtrang.equals("true")){
             viewHolder.imgBanAn.setImageResource(R.drawable.ic_baseline_airline_seat_legroom_normal_40);
@@ -103,7 +96,7 @@ public class AdapterDisplayTable extends BaseAdapter implements View.OnClickList
             viewHolder.imgBanAn.setImageResource(R.drawable.ic_baseline_event_seat_40);
         }
 
-        viewHolder.txtTenBanAn.setText(banAnDTO.getTenBan());
+        viewHolder.txtTenBanAn.setText(tableDTO.getTableName());
         viewHolder.imgBanAn.setTag(position);
 
         //sự kiện click
@@ -122,8 +115,8 @@ public class AdapterDisplayTable extends BaseAdapter implements View.OnClickList
 
         int vitri1 = (int) viewHolder.imgBanAn.getTag();
 
-        int maban = banAnDTOList.get(vitri1).getMaBan();
-        String tenban = banAnDTOList.get(vitri1).getTenBan();
+        int maban = tableDTOList.get(vitri1).getTableID();
+        String tenban = tableDTOList.get(vitri1).getTableName();
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         String ngaydat= dateFormat.format(calendar.getTime());
@@ -131,7 +124,7 @@ public class AdapterDisplayTable extends BaseAdapter implements View.OnClickList
         switch (id){
             case R.id.img_customtable_BanAn:
                 int vitri = (int)v.getTag();
-                banAnDTOList.get(vitri).setDuocChon(true);
+                tableDTOList.get(vitri).setSelected(true);
                 HienThiButton();
                 break;
 
@@ -142,19 +135,19 @@ public class AdapterDisplayTable extends BaseAdapter implements View.OnClickList
             case R.id.img_customtable_GoiMon:
                 Intent getIHome = ((HomeActivity)context).getIntent();
                 int manv = getIHome.getIntExtra("manv",0);
-                String tinhtrang = banAnDAO.LayTinhTrangBanTheoMa(maban);
+                String tinhtrang = tableDAO.getStatusTableById(maban);
 
                 if(tinhtrang.equals("false")){
                     //Thêm bảng gọi món và update tình trạng bàn
-                    DonDatDTO donDatDTO = new DonDatDTO();
-                    donDatDTO.setMaBan(maban);
-                    donDatDTO.setMaNV(manv);
-                    donDatDTO.setNgayDat(ngaydat);
-                    donDatDTO.setTinhTrang("false");
-                    donDatDTO.setTongTien("0");
+                    OrderDTO orderDTO = new OrderDTO();
+                    orderDTO.setTableID(maban);
+                    orderDTO.setEmployeeID(manv);
+                    orderDTO.setDate(ngaydat);
+                    orderDTO.setStatus("false");
+                    orderDTO.setTotalAmount("0");
 
-                    long ktra = donDatDAO.ThemDonDat(donDatDTO);
-                    banAnDAO.CapNhatTinhTrangBan(maban,"true");
+                    long ktra = orderDAO.addOrder(orderDTO);
+                    tableDAO.updateStatusTableById(maban,"true");
                     if(ktra == 0){ Toast.makeText(context,context.getResources().getString(R.string.add_failed),Toast.LENGTH_SHORT).show(); }
                 }
                 //chuyển qua trang category

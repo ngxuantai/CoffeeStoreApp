@@ -5,49 +5,45 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.DAO.BanAnDAO;
-import com.example.myapplication.DAO.NhanVienDAO;
-import com.example.myapplication.DTO.BanAnDTO;
-import com.example.myapplication.DTO.DonDatDTO;
-import com.example.myapplication.DTO.NhanVienDTO;
+import com.example.myapplication.DAO.TableDAO;
+import com.example.myapplication.DAO.EmployeeDAO;
+import com.example.myapplication.DTO.OrderDTO;
+import com.example.myapplication.DTO.EmployeeDTO;
 import com.example.myapplication.R;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
 public class AdapterDisplayStatistic extends BaseAdapter {
     Context context;
     int layout;
-    List<DonDatDTO> donDatDTOS;
+    List<OrderDTO> orderDTOS;
     ViewHolder viewHolder;
-    NhanVienDAO nhanVienDAO;
-    BanAnDAO banAnDAO;
+    EmployeeDAO employeeDAO;
+    TableDAO tableDAO;
 
-    public AdapterDisplayStatistic(Context context, int layout, List<DonDatDTO> donDatDTOS){
+    public AdapterDisplayStatistic(Context context, int layout, List<OrderDTO> orderDTOS){
         this.context = context;
         this.layout = layout;
-        this.donDatDTOS = donDatDTOS;
-        nhanVienDAO = new NhanVienDAO(context);
-        banAnDAO = new BanAnDAO(context);
+        this.orderDTOS = orderDTOS;
+        employeeDAO = new EmployeeDAO(context);
+        tableDAO = new TableDAO(context);
     }
 
     @Override
     public int getCount() {
-        return donDatDTOS.size();
+        return orderDTOS.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return donDatDTOS.get(position);
+        return orderDTOS.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return donDatDTOS.get(position).getMaDonDat();
+        return orderDTOS.get(position).getOrderID();
     }
 
     @Override
@@ -68,20 +64,20 @@ public class AdapterDisplayStatistic extends BaseAdapter {
         }else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        DonDatDTO donDatDTO = donDatDTOS.get(position);
+        OrderDTO orderDTO = orderDTOS.get(position);
 
-        viewHolder.txt_customstatistic_MaDon.setText("Mã đơn: "+donDatDTO.getMaDonDat());
-        viewHolder.txt_customstatistic_NgayDat.setText(donDatDTO.getNgayDat());
-        viewHolder.txt_customstatistic_TongTien.setText(donDatDTO.getTongTien()+" VNĐ");
-        if (donDatDTO.getTinhTrang().equals("true"))
+        viewHolder.txt_customstatistic_MaDon.setText("Mã đơn: "+ orderDTO.getOrderID());
+        viewHolder.txt_customstatistic_NgayDat.setText(orderDTO.getDate());
+        viewHolder.txt_customstatistic_TongTien.setText(orderDTO.getTotalAmount()+" VNĐ");
+        if (orderDTO.getStatus().equals("true"))
         {
             viewHolder.txt_customstatistic_TrangThai.setText("Đã thanh toán");
         }else {
             viewHolder.txt_customstatistic_TrangThai.setText("Chưa thanh toán");
         }
-        NhanVienDTO nhanVienDTO = nhanVienDAO.LayNVTheoMa(donDatDTO.getMaNV());
-        viewHolder.txt_customstatistic_TenNV.setText(nhanVienDTO.getHOTENNV());
-        viewHolder.txt_customstatistic_BanDat.setText(banAnDAO.LayTenBanTheoMa(donDatDTO.getMaBan()));
+        EmployeeDTO employeeDTO = employeeDAO.getEmployeeById(orderDTO.getOrderID());
+        viewHolder.txt_customstatistic_TenNV.setText(employeeDTO.getFullName());
+        viewHolder.txt_customstatistic_BanDat.setText(tableDAO.getTableNameById(orderDTO.getTableID()));
 
         return view;
     }

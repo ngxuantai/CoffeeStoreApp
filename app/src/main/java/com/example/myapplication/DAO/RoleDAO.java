@@ -7,29 +7,29 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.myapplication.Database.CreateDatabase;
 
-public class QuyenDAO {
+public class RoleDAO {
     SQLiteDatabase database;
-    public QuyenDAO(Context context){
+    public RoleDAO(Context context){
         CreateDatabase createDatabase = new CreateDatabase(context);
         database = createDatabase.open();
     }
 
-    public void ThemQuyen(String tenquyen){
+    public void addRole(String roleName){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CreateDatabase.TBL_QUYEN_TENQUYEN,tenquyen);
-        database.insert(CreateDatabase.TBL_QUYEN,null,contentValues);
+        contentValues.put(CreateDatabase.ROLE_NAME,roleName);
+        database.insert(CreateDatabase.TABLE_ROLE,null,contentValues);
     }
 
 
-    public String LayTenQuyenTheoMa(int maquyen){
-        String tenquyen ="";
-        String query = "SELECT * FROM "+CreateDatabase.TBL_QUYEN+" WHERE "+CreateDatabase.TBL_QUYEN_MAQUYEN+" = "+maquyen;
+    public String getRoleById(int roleId){
+        String roleName ="";
+        String query = "SELECT * FROM "+CreateDatabase.TABLE_ROLE+" WHERE "+CreateDatabase.ROLE_ID+" = "+roleId;
         Cursor cursor = database.rawQuery(query,null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()){
-            tenquyen = cursor.getString(cursor.getColumnIndex(CreateDatabase.TBL_QUYEN_TENQUYEN));
+            roleName = cursor.getString(cursor.getColumnIndex(CreateDatabase.ROLE_NAME));
             cursor.moveToNext();
         }
-        return tenquyen;
+        return roleName;
     }
 }
